@@ -1,0 +1,17 @@
+# requirements are for conda
+privacy-meter>=1.0
+
+# from privacy-meter
+tensorflow
+pytorch::pytorch
+pytorch::torchvision
+matplotlib
+numpy
+scikit-learn
+seaborn
+setuptools
+scipy
+pandas
+jinja2
+pillow
+opacus
