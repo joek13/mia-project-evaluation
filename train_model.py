@@ -71,7 +71,7 @@ for epoch in range(EPOCHS):
         optimizer.step()
 
         running_loss += loss.item()
-        instances += 1
+        instances += len(inputs)
 
     print_statistics(epoch, running_loss / instances)
     
