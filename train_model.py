@@ -1,21 +1,24 @@
 # trains standard resnet model on cifar-10 dataset
-
 import numpy as np
+import tqdm
 
 import torch
 import torch.optim as optim
 
-from torchvision.models import resnet
 from torchvision import datasets, transforms
 
-BATCH_SIZE = 4
-EPOCHS = 2
+import mia
+
+BATCH_SIZE = 32
+EPOCHS = 10
 
 if __name__ != "__main__":
     exit(0)
 
-# resnet 18 model
-model = resnet.resnet18(num_classes=10)
+# use gpu if available
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    
+model = mia.target_model.to(device)
 
 # dataset transforms
 transform = transforms.Compose([transforms.ToTensor(), 
@@ -33,24 +36,32 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-def print_statistics(epoch, running_loss, over_minibatches):
+def print_statistics(epoch, train_loss):
     test_loss = 0.0
     test_correct = 0
     n_test = 0
 
     with torch.no_grad():
         for (inputs, labels) in testloader:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+            
             outputs = model(inputs)
-            test_correct += np.count_nonzero(np.argmax(outputs, axis=1) == labels)
+            test_correct += np.count_nonzero(np.argmax(outputs.cpu(), axis=1) == labels.cpu())
             test_loss += criterion(outputs, labels).item()
             n_test += len(inputs)
 
-    print(f"[{epoch + 1}] train loss: {running_loss / over_minibatches:.3f} test loss: {test_loss / n_test:.3f} test accuracy: {test_correct / n_test:.3f}")
+    print(f"[epoch {epoch + 1}] train loss: {train_loss:.3f} test loss: {test_loss / n_test:.3f} test accuracy: {test_correct / n_test:.3f}")
 
 for epoch in range(EPOCHS):
     running_loss = 0.0
-    for i, data in enumerate(trainloader):
+    instances = 0
+    
+    for i, data in tqdm.tqdm(enumerate(trainloader), f"epoch {epoch+1}"):
         inputs, labels = data
+        inputs = inputs.to(device)
+        labels = labels.to(device)
+        
         optimizer.zero_grad()
 
         # forward pass
@@ -60,10 +71,11 @@ for epoch in range(EPOCHS):
         optimizer.step()
 
         running_loss += loss.item()
-        if i % 2000 == 1999:    # print every 2000 mini-batches
-            print_statistics(epoch, running_loss, 2000)
-            running_loss = 0.0
+        instances += 1
+
+    print_statistics(epoch, running_loss / instances)
     
-    PATH = f'./models/resnet_{epoch + 1}.pth'
+    PATH = f'./models/resnet_epoch{epoch + 1}.pth'
     torch.save(model.state_dict(), PATH)
+    print(f"saved checkpoint to {PATH}")
         

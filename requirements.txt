@@ -1,5 +1,6 @@
 # requirements are for conda
 privacy-meter>=1.0
+tqdm
 
 # from privacy-meter
 tensorflow
