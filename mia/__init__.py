@@ -1,1 +1,1 @@
-from .model import model as target_model
+from .model import create_model, load_model

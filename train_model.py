@@ -18,7 +18,7 @@ if __name__ != "__main__":
 # use gpu if available
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
-model = mia.target_model.to(device)
+model = mia.create_model().to(device)
 
 # dataset transforms
 transform = transforms.Compose([transforms.ToTensor(), 
