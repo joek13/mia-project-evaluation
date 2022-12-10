@@ -73,5 +73,5 @@ def train_model(model, moniker, train_loader, test_loader=None, epoch_start=0, n
     model_dir = Path(save_path)
     model_dir.mkdir(parents=True, exist_ok=True)
     model_path = model_dir.joinpath(f"{moniker}.pth")
-    save_model(model, ckpt_path, acc, attr)
+    save_model(model, model_path, acc, attr)
     print(f"saved model to {model_path}")

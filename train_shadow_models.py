@@ -33,11 +33,11 @@ for shadow_idx in range(N_SHADOW_MODELS):
 
     shadow_model = mia.create_model()
     train.train_model(shadow_model, 
-                      f"shadow{shadow_model}",
+                      f"shadow{shadow_idx}",
                       dataset.create_trainloader(shadow_trainset),
                       dataset.create_testloader(shadow_testset),
                       n_epochs = EPOCHS,
-                      save_ckpt=False,
+                      save_ckpt=True,
                       save_path="./shadowmodels/",
                       attr=attr
                       )
