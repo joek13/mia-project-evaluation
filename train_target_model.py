@@ -26,4 +26,9 @@ if START_FROM == 0:
 else:
     model = mia.load_model(f"./models/resnet_epoch{START_FROM}.pth").to(device)
 
-train.train_model(model, "resnet18", trainloader, testloader)
+train.train_model(model, 
+                  "resnet18",
+                  trainloader,
+                  testloader,
+                  epoch_start=START_FROM,
+                  n_epochs=EPOCHS)
