@@ -48,7 +48,10 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
                                          shuffle=False, num_workers=0)
 
 criterion = torch.nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+optimizer = optim.SGD(model.parameters(), lr=0.1,
+                      momentum=0.9, weight_decay=5e-4)
+
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS)
 
 def print_statistics(epoch, train_loss):
     test_loss = 0.0
@@ -87,8 +90,10 @@ for epoch in range(START_FROM, START_FROM + EPOCHS):
         running_loss += loss.item()
         instances += len(inputs)
 
+    scheduler.step()
+
     print_statistics(epoch, running_loss / instances)
-    
+
     PATH = f'./models/resnet_epoch{epoch + 1}.pth'
     torch.save(model.state_dict(), PATH)
     print(f"saved checkpoint to {PATH}")
