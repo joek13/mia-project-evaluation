@@ -1,9 +1,10 @@
 import torch
+import torch.nn
 from torchvision.models import resnet
 
 def create_model():
     # resnet18 with 10 classes
-    return resnet.resnet18(num_classes=10)
+    return torch.nn.DataParallel(resnet.resnet18(num_classes=10))
 
 def save_model(model, path, acc, attr):
     out_dict = {
@@ -15,12 +16,10 @@ def save_model(model, path, acc, attr):
 
 def load_model(path, device=None):
     model = create_model()
+    model = torch.nn.DataParallel(model)
 
-    try:
-        model.load_state_dict(torch.load(path, map_location=device))
-    except RuntimeError:
-        rich_dict = torch.load(path, map_location=device)
-        model.load_state_dict(rich_dict["state"])
+    dict = torch.load(path, map_location=device)
+    model.load_state_dict(dict["state"])
 
     return model
 

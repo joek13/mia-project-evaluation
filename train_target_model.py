@@ -11,8 +11,6 @@ import mia
 from mia.dataset import trainset, testset, trainloader, testloader
 from mia import train
 
-
-START_FROM = 0
 EPOCHS = 20
 
 if __name__ != "__main__":
@@ -21,14 +19,10 @@ if __name__ != "__main__":
 # use gpu if available
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-if START_FROM == 0:
-    model = mia.create_model().to(device)
-else:
-    model = mia.load_model(f"./models/resnet_epoch{START_FROM}.pth").to(device)
+model = mia.create_model().to(device)
 
 train.train_model(model, 
                   "resnet18",
                   trainloader,
                   testloader,
-                  epoch_start=START_FROM,
                   n_epochs=EPOCHS)

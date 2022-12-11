@@ -32,7 +32,7 @@ def print_statistics(model, test_loader, epoch, train_loss, criterion):
 
 def train_model(model, moniker, train_loader, test_loader=None, epoch_start=0, n_epochs=50, lr=0.1, save_ckpt=True, save_path="./models/", attr={}):
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.1,
+    optimizer = optim.SGD(model.parameters(), lr=lr,
                         momentum=0.9, weight_decay=5e-4)
 
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=n_epochs)
